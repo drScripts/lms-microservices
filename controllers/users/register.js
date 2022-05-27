@@ -21,10 +21,10 @@ module.exports = async (req, res) => {
         "string.email": "Email must be an active email",
         "any.required": "Please insert email !",
       }),
-      password: Joi.string().min(8).required({
+      password: Joi.string().min(8).required().messages({
         "string.base": "Password must be a type of string",
-        "any.required": "Please insert your password",
         "string.min": "Password length must be greather than 8 character",
+        "any.required": "Please insert your password",
       }),
       profession: Joi.string().messages({
         "string.base": "User profession must be a type of string",
