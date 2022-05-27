@@ -67,6 +67,7 @@ module.exports = async (req, res) => {
           id: newUser.id,
           name: newUser.name,
           email: newUser.email,
+          role: newUser.role,
           phoneNumber: newUser.profile.phoneNumber,
           profession: newUser.profile.profession,
           avatar: newUser.profile.avatar,
