@@ -20,7 +20,7 @@ cloudinary.config({
  */
 const postImage = async (filePath) => {
   const res = await cloudinary.uploader.upload(filePath, {
-    type: "image",
+    folder: "lmsMicroservicesMedia",
   });
 
   return res;
