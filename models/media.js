@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       path: DataTypes.STRING,
       description: DataTypes.TEXT,
+      publicId: DataTypes.STRING,
     },
     {
       sequelize,
