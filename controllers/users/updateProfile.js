@@ -1,7 +1,8 @@
 const { request, response } = require("express");
-const { userServiceUrl } = require("../../config");
-const { getJwToken, getRefreshToken } = require("../../helpers");
+const { userServiceUrl, mediaServiceUrl } = require("../../config");
 const axios = require("../../services/apiAdapter");
+const fs = require("fs");
+const FormData = require("form-data");
 
 /**
  *
@@ -12,9 +13,26 @@ const axios = require("../../services/apiAdapter");
 module.exports = async (req, res) => {
   try {
     const body = req.body;
+    let avatar = null;
 
-    const resApi = await axios(userServiceUrl).post(
-      "/login",
+    if (req.file) {
+      const formData = new FormData();
+      formData.append("media", fs.createReadStream(req.file.path));
+
+      const media = await axios(mediaServiceUrl).post("/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      avatar = media.data.data.media;
+      body.avatar = avatar.id;
+    }
+
+    const { id: userId } = req.user;
+
+    const user = await axios(userServiceUrl).patch(
+      `/${userId}`,
       JSON.stringify(body),
       {
         headers: {
@@ -23,32 +41,13 @@ module.exports = async (req, res) => {
       }
     );
 
-    const token = getJwToken(resApi.data.data.user);
-    const refreshToken = getRefreshToken({
-      id: resApi.data.data.user.id,
-    });
-
-    await axios(userServiceUrl).post(
-      "/refresh-tokens",
-      JSON.stringify({
-        token: refreshToken,
-        userId: resApi.data.data.user.id,
-      }),
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    if (avatar) {
+      user.data.data.user.avatar = avatar;
+    }
 
     return res.send({
       status: "success",
-      data: {
-        user: resApi.data.data.user,
-        token,
-        refreshToken,
-        tokenType: "Bearer",
-      },
+      data: user.data.data.user,
     });
   } catch (err) {
     console.log(err);

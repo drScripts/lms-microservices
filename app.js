@@ -5,6 +5,7 @@ const logger = require("morgan");
 
 const mediaRouter = require("./routes/media");
 const userRouter = require("./routes/users");
+const refreshTokenRouter = require("./routes/refreshToken");
 
 const app = express();
 
@@ -16,5 +17,6 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/media", mediaRouter);
 app.use("/users", userRouter);
+app.use("/refresh-tokens", refreshTokenRouter);
 
 module.exports = app;

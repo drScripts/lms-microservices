@@ -1,0 +1,1 @@
+exports.getNewToken = require("./getNewToken");
