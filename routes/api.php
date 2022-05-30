@@ -56,6 +56,12 @@ Route::prefix('image-courses')->controller(ImageCourseController::class)->group(
     Route::delete('/{id}', 'destroy');
 });
 
+Route::prefix('user-courses')->controller(UserCourseController::class)->group(function () {
+    Route::get('/', 'index');
+    Route::post('/', 'store');
+});
+
+Route::get('/test', [UserCourseController::class, 'test']);
 Route::controller(CourseController::class)->group(function () {
     Route::get('/', 'index');
     Route::get("/{id}", 'show');
@@ -63,5 +69,3 @@ Route::controller(CourseController::class)->group(function () {
     Route::patch("/{id}", 'update');
     Route::delete("/{id}", 'destroy');
 });
-
-Route::get('/test', [UserCourseController::class, 'test']);

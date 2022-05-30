@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use Exception;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 trait UserServices
 {
@@ -10,32 +12,61 @@ trait UserServices
 
     public function __construct()
     {
-        $this->userService = Http::withOptions([
+        $this->userService = Http::timeout(10)->withOptions([
             'base_uri' => env("USER_SERVICE_URL"),
         ]);
     }
 
     public function getUser(int $userId): array
     {
-        $response = $this->userService->get("/$userId");
+        try {
+            $response = $this->userService->get("/$userId");
 
-        if ($response->ok()) {
-            return $response['data']['user'];
+            if ($response->ok()) {
+                return [
+                    'status_code' => $response->status(),
+                    'data' => $response['data']['user'],
+                ];
+            } else {
+                return [
+                    'status_code' => $response->status(),
+                    'message' => $response['message'],
+                ];
+            }
+        } catch (Exception $err) {
+            Log::error($err->getMessage(), ['user service error']);
+            return [
+                'status_code' => 500,
+                'message' => "User service unavailable"
+            ];
         }
-
-        return [];
     }
 
     public function getUsers(array $userId): array
     {
-        $response = $this->userService->get("/", [
-            'user_ids' => $userId,
-        ]);
+        try {
+            $response = $this->userService->get("/", [
+                'user_ids' => $userId,
+            ]);
 
-        if ($response->ok()) {
-            return $response['data']['users'];
+            if ($response->ok()) {
+                return [
+                    'status_code' => $response->status(),
+                    'data' => $response['data']['users'],
+                ];
+            } else {
+                return [
+                    'status_code' => $response->status(),
+                    'message' => $response['message'],
+                ];
+            }
+        } catch (Exception $err) {
+            Log::error($err->getMessage(), ['user service error']);
+
+            return [
+                'status_code' => 500,
+                'message' => "User service unavailable"
+            ];
         }
-
-        return [];
     }
 }
