@@ -69,4 +69,15 @@ trait UserServices
             ];
         }
     }
+
+    public function checkUser(int | string $userId): bool
+    {
+        try {
+            $res = $this->userService->get("/$userId");
+
+            return $res->ok();
+        } catch (\Throwable $th) {
+            return false;
+        }
+    }
 }

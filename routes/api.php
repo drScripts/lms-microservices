@@ -5,6 +5,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ImageCourseController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\MentorController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\UserCourseController;
 use App\Models\Lesson;
 use Illuminate\Http\Request;
@@ -59,6 +60,13 @@ Route::prefix('image-courses')->controller(ImageCourseController::class)->group(
 Route::prefix('user-courses')->controller(UserCourseController::class)->group(function () {
     Route::get('/', 'index');
     Route::post('/', 'store');
+});
+
+Route::prefix("/reviews")->controller(ReviewController::class)->group(function () {
+    Route::get("/", [ReviewController::class, 'index']);
+    Route::post("/", [ReviewController::class, 'store']);
+    Route::patch('/{id}', [ReviewController::class, 'update']);
+    Route::delete("/{id}", [ReviewController::class, 'destroy']);
 });
 
 Route::get('/test', [UserCourseController::class, 'test']);
