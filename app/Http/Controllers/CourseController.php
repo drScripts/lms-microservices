@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Review;
+use App\Models\UserCourse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -49,7 +51,7 @@ class CourseController extends Controller
             $courses->where("price", "<=", $endPrice);
         }
 
-        $courses->with(['mentor', 'images']);
+        $courses->with(['mentor', 'images', 'chapters', 'reviews']);
         $courses = $courses->paginate(10);
 
         return response()->json([
@@ -100,12 +102,33 @@ class CourseController extends Controller
      */
     public function show($id)
     {
-        $course = Course::with(['mentor', 'chapters.lessons', 'reviews', 'images'])->find($id);
+        $course = Course::with(['mentor', 'chapters.lessons', 'images'])->find($id);
 
         if (!$course) return response()->json([
             'status' => "error",
             'message' => "Can't find course with that id!",
         ], 404);
+
+
+        $reviews = Review::where("course_id", $id)->get()->toArray();
+
+        if ($reviews) {
+            $userIds = array_column($reviews, 'user_id');
+            $users = $this->getUsers($userIds);
+
+            if ($users['status_code'] == 200) {
+                foreach ($reviews as $key => $review) {
+                    $userIndex = array_search($review['user_id'], array_column($users['data'], 'id'));
+                    $reviews[$key]['user'] = $users['data'][$userIndex];
+                }
+            } else {
+                $reviews = [];
+            }
+        }
+
+        $totalStudent = UserCourse::where('course_id', $id)->count();
+        $course['reviews'] = $reviews;
+        $course['total_student'] = $totalStudent;
 
         return response()->json([
             'status' => 'success',
