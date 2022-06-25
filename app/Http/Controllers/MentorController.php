@@ -45,12 +45,12 @@ class MentorController extends Controller
         if ($validate->fails()) return response()->json([
             'status' => "error",
             'messages' =>  $validate->errors()->toArray(),
-        ]);
+        ], 400);
 
         $mentor = Mentor::create($data);
 
         return response()->json([
-            'status' => "error",
+            'status' => "succes",
             'data' => $mentor,
         ], 201);
     }
@@ -128,7 +128,7 @@ class MentorController extends Controller
 
         if (!$mentor) return response()->json([
             'status' => "error",
-            'message' => "Can't find mentor with that id!"
+            'messages' => "Can't find mentor with that id!",
         ], 404);
 
         $mentor->delete();
