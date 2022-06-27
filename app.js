@@ -8,6 +8,7 @@ const userRouter = require("./routes/users");
 const refreshTokenRouter = require("./routes/refreshToken");
 const mentorsRouter = require("./routes/mentors");
 const coursesRouter = require("./routes/courses");
+const chapterRouter = require("./routes/chapters");
 
 const app = express();
 
@@ -22,5 +23,6 @@ app.use("/users", userRouter);
 app.use("/refresh-tokens", refreshTokenRouter);
 app.use("/mentors", mentorsRouter);
 app.use("/courses", coursesRouter);
+app.use("/chapters", chapterRouter);
 
 module.exports = app;
