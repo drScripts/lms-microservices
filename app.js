@@ -10,6 +10,7 @@ const mentorsRouter = require("./routes/mentors");
 const coursesRouter = require("./routes/courses");
 const chapterRouter = require("./routes/chapters");
 const lessonsRouter = require("./routes/lessons");
+const imageCourseRouter = require("./routes/image-courses");
 
 const app = express();
 
@@ -26,5 +27,6 @@ app.use("/mentors", mentorsRouter);
 app.use("/courses", coursesRouter);
 app.use("/chapters", chapterRouter);
 app.use("/lessons", lessonsRouter);
+app.use("/image-courses", imageCourseRouter);
 
 module.exports = app;
